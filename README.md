@@ -4,7 +4,7 @@ configured to enable running with [Docker](https://www.docker.com/).
 
 This sample code handles HTTP GET requests to `/` and `/echo/<message>`
 
-# Create api with date and shlf. 
+# Create api with Dart SDK and shlf. 
 
 ## Running with the Dart SDK
 
