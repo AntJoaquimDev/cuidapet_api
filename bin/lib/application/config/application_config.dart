@@ -6,6 +6,7 @@ import 'package:shelf_router/shelf_router.dart';
 import '../logger/i_logger.dart';
 import '../logger/logger.dart';
 import 'database_connection_configuration.dart';
+import 'service_locator_config.dart';
 
 
 class ApplicationConfig {
@@ -39,7 +40,7 @@ Future<DotEnv> _loadEnv() async => DotEnv(includePlatformEnvironment: true)..loa
   
   void _configLogger() =>GetIt.I.registerLazySingleton<ILogger>(() => Logger());
   
-  void _loadDependencies() {}
+  void _loadDependencies() =>configureDependencies();
   
   void _loadRoutersConfigure(Router router) {}
 

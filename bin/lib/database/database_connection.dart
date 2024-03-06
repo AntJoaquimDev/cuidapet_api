@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
 
 import '../application/config/database_connection_configuration.dart';
-import '../application/database/i_database_connection.dart';
 import './i_database_connection.dart';
 
 @LazySingleton(as: IDatabaseConnection)
