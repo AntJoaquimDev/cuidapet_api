@@ -3,6 +3,7 @@ import 'package:dotenv/dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+import '../../../houters/router_cofigure.dart';
 import '../logger/i_logger.dart';
 import '../logger/logger.dart';
 import 'database_connection_configuration.dart';
@@ -42,7 +43,7 @@ Future<DotEnv> _loadEnv() async => DotEnv(includePlatformEnvironment: true)..loa
   
   void _loadDependencies() =>configureDependencies();
   
-  void _loadRoutersConfigure(Router router) {}
+  void _loadRoutersConfigure(Router router) => RouterCofigure(router).configur();
 
-   DotEnv get env => _env;
+   //DotEnv get env => _env;
 }
