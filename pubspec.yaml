@@ -16,6 +16,7 @@ dependencies:
   injectable: ^1.2.2
   http: ^0.13.0
   mysql1: ^0.20.0
+  jaguar_jwt: ^3.0.0
 
 dev_dependencies:
   injectable_generator: ^1.2.2

@@ -45,5 +45,5 @@ Future<DotEnv> _loadEnv() async => DotEnv(includePlatformEnvironment: true)..loa
   
   void _loadRoutersConfigure(Router router) => RouterCofigure(router).configur();
 
-   //DotEnv get env => _env;
+   DotEnv get env => _env;
 }

@@ -9,7 +9,7 @@ class TesteController {
 
    @Route.get('/')
    Future<Response> find(Request request) async { 
-      return Response.ok(jsonEncode('{"ola" ,"joaquim"}'));
+      return Response.ok(jsonEncode({'ola Mundo' :'joaquim'}),headers:{'content-type':'aplication/json'} );
    }
 
    Router get router => _$TesteControllerRouter(this);

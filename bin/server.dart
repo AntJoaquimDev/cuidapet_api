@@ -7,14 +7,15 @@ import 'package:shelf_router/shelf_router.dart';
 
 import 'lib/application/config/application_config.dart';
 import 'package:shelf/shelf.dart' as shelf;
-import 'package:shelf/shelf_io.dart' as io;
-// Configure routes.
-// final _router = Router()
-//   ..get('/', _rootHandler)
-//   ..get('/echo/<message>', _echoHandler);
+
+import 'lib/application/middlewares/cors/cors_middlewares.dart';
+import 'lib/application/middlewares/defautContentype/default_content_type.dart';
+
+
+//Configure routes.
 
 Response _rootHandler(Request req) {
-  return Response.ok('Hello, World. Modulo Api. Acdemia do Flutter!\n');
+  return Response.ok('Hello, World. Modulo Api. Academia do Flutter!\n');
 }
 
 Response _echoHandler(Request request) {
@@ -29,14 +30,16 @@ void main(List<String> args) async {
    // Application Config
   final router = Router();
   
-  //router.get('/health', (shelf.Request request) => shelf.Response.ok(jsonEncode({'up': 'true'})));
+  router.get('/health', (shelf.Request request) => shelf.Response.ok(jsonEncode({'up': 'true'})));
 
    final appConfig = ApplicationConfig();
   appConfig.loadConfigApplication(router);
 
 
   // Configure a pipeline that logs requests.
-  final handler = Pipeline()
+    final handler = const shelf.Pipeline()
+      .addMiddleware(CorsMiddlewares().handler)
+      .addMiddleware(DefaultContentType('application/json;charset=utf-8').handler)
   .addMiddleware(logRequests())
   .addHandler(router);
 

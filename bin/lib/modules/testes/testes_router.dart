@@ -8,6 +8,7 @@ class TestesRouter implements IRouter{
   @override
   void configure(Router router) {
    router.mount('/hello/', TesteController().router);
+   
   }
   
 }
