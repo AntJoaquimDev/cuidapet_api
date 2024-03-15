@@ -5,7 +5,9 @@ import 'package:shelf/src/request.dart';
 
 import 'package:shelf/src/response.dart';
 
+
 import '../../logger/i_logger.dart';
+import '../../logger/logger.dart';
 import '../helpers/jwt_helper.dart';
 import '../middlewares.dart';
 import 'security_skip_url.dart';
@@ -14,6 +16,8 @@ class SecurityMiddleware extends Middlewares {
   final ILogger log;
 
   final skypUrl = <SecuritySkipUrl>[
+   //teste of skip
+   // SecuritySkipUrl(url: '/hello/', method: 'GET'),
     SecuritySkipUrl(url: '/auth/register', method: 'POST'),
     SecuritySkipUrl(url: '/auth/', method: 'POST'),
     SecuritySkipUrl(url: '/suppliers/user', method: 'GET'),
