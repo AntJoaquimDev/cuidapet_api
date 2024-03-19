@@ -8,7 +8,7 @@ import 'package:shelf/src/response.dart';
 
 import '../../logger/i_logger.dart';
 import '../../logger/logger.dart';
-import '../helpers/jwt_helper.dart';
+import '../../helpers/jwt_helper.dart';
 import '../middlewares.dart';
 import 'security_skip_url.dart';
 

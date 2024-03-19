@@ -1,4 +1,4 @@
-import '../../../application/middlewares/helpers/request_mapping.dart';
+import '../../../application/helpers/request_mapping.dart';
 
 class UserSaveInputModel extends RequestMapping {
   late String email;

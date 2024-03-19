@@ -1,13 +1,15 @@
+import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
 
 import '../../../application/exceptions/database_exceptions.dart';
 import '../../../application/exceptions/user_exists_exception.dart';
 import '../../../application/logger/i_logger.dart';
-import '../../../application/middlewares/helpers/cripty_helper.dart';
+import '../../../application/helpers/cripty_helper.dart';
 import '../../../database/i_database_connection.dart';
 import '../../../entities/user.dart';
 import './i_user_rpository.dart';
 
+@LazySingleton(as: IUserRpository)
 class UserRpositoryImpl implements IUserRpository {
   final IDatabaseConnection connection;
   final ILogger log;
@@ -18,13 +20,13 @@ class UserRpositoryImpl implements IUserRpository {
 
   @override
   Future<User> createUser(User user) async {
-    MySqlConnection? conn;
+    late final MySqlConnection? conn;
     try {
       conn = await connection.openConnection();
       final query = '''
-insert usuario(email, tipo_cadastro, img_avatar, senha, fornecedor_id, social_id)
-    values(?,?,?,?,?,?)
-''';
+            insert usuario(email, tipo_cadastro, img_avatar, senha, fornecedor_id, social_id)
+                   values(?,?,?,?,?,?)
+      ''';
       final result = await conn.query(query, [
         user.email,
         user.registerType,
