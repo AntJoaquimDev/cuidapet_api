@@ -1,0 +1,4 @@
+
+class UserExistsException implements Exception{
+  
+}
