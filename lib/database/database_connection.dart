@@ -6,6 +6,7 @@ import '../application/config/database_connection_configuration.dart';
 import './i_database_connection.dart';
 
 @LazySingleton(as: IDatabaseConnection)
+
 class DatabaseConnection implements IDatabaseConnection {
   final DatabaseConnectionConfiguration _configuration;
 
