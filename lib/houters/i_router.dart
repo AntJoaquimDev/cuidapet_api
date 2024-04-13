@@ -1,5 +1,5 @@
 import 'package:shelf_router/shelf_router.dart';
 
-abstract interface class IRouter {
+abstract class IRouter {
 void configure(Router router);
 }

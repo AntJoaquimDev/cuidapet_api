@@ -1,3 +1,4 @@
+
 class DatabaseConnectionConfiguration {
   final String host;
   final String user;

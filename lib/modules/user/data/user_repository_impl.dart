@@ -1,3 +1,4 @@
+import 'package:cuidapet_api/modules/user/data/i_user_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
 
@@ -7,10 +8,9 @@ import '../../../application/logger/i_logger.dart';
 import '../../../application/helpers/cripty_helper.dart';
 import '../../../database/i_database_connection.dart';
 import '../../../entities/user.dart';
-import './i_user_rpository.dart';
 
-@LazySingleton(as: IUserRpository)
-class UserRpositoryImpl implements IUserRpository {
+@LazySingleton(as: IUserRepository)
+class UserRpositoryImpl implements IUserRepository {
   final IDatabaseConnection connection;
   final ILogger log;
   UserRpositoryImpl({
