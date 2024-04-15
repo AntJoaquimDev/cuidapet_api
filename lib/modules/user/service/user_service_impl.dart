@@ -6,8 +6,6 @@ import 'package:cuidapet_api/modules/user/service/i_user_service.dart';
 import 'package:cuidapet_api/modules/user/view_models/user_save_input_model.dart';
 import 'package:injectable/injectable.dart';
 
-
-
 @LazySingleton(as: IUserService)
 class UserServiceImpl implements IUserService {
   IUserRepository userRpository;
@@ -16,6 +14,11 @@ class UserServiceImpl implements IUserService {
     required this.userRpository,
     required this.log,
   });
+
+  @override
+  Future<User> loginWithEmailPassword(
+          String email, String password, bool supplierUser) =>
+      userRpository.loginWithEmailPassword(email, password, supplierUser);
 
   @override
   Future<User> createUser(UserSaveInputModel user) {

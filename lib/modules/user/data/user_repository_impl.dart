@@ -1,3 +1,4 @@
+import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api/modules/user/data/i_user_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
@@ -18,14 +19,47 @@ class UserRpositoryImpl implements IUserRepository {
     required this.log,
   });
 
-
-
   @override
-  Future<User> loginWithEmailPassword(String email, String password,bool supplierUser) {
-    // TODO: implement loginWithEmailPassword
-    throw UnimplementedError();
-  }
+  Future<User> loginWithEmailPassword(
+      String email, String password, bool supplierUser) async {
+    MySqlConnection? conn;
+    try {
+      conn = await connection.openConnection();
+      var query = '''
+        select * from usuario where email=? and senha=? ''';
 
+      if (supplierUser) {
+        query += ' and fornecedor_id is not null ';
+      } else {
+        query += ' and fornecedor_id is  null ';
+      }
+      final result = await conn.query(query, [
+        email,
+        CriptyHelper.generateSha256Hash(password),
+      ]);
+      if (result.isEmpty) {
+        log.error('usuaio ou senha invaidos');
+        throw UserNotFoundException(
+            message: 'Usuario nao existe em nossos cadastro');
+      } else {
+        final userSqlData = result.first;
+        return User(
+            id: userSqlData['id'] as int,
+            email: userSqlData['email'],
+            registerType: userSqlData['tipo_cadastro'],
+            iosToken: (userSqlData['ios_token'] as Blob?)?.toString(),
+            androidToken: (userSqlData['android_token'] as Blob?)?.toString(),
+            refreshToken: (userSqlData['refresh_token'] as Blob?)?.toString(),
+            imageAvatar: (userSqlData['img_avatar'] as Blob?)?.toString(),
+            supplierId: userSqlData['fornecedor_id']);
+      }
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao realizar login', e, s);
+      throw DatabaseException(message: e.message);
+    } finally {
+      await conn?.close();
+    }
+  }
 
   @override
   Future<User> createUser(User user) async {
@@ -47,10 +81,8 @@ class UserRpositoryImpl implements IUserRepository {
 
       final userId = result.insertId;
       return user.copyWith(id: userId, password: '');
-      
     } on MySqlException catch (e, s) {
-      
-       if (e.message.contains('usuario.email_UNIQUE')) {
+      if (e.message.contains('usuario.email_UNIQUE')) {
         log.error('Usuario ja cadastrado na base de dados', e, s);
         throw UserExistsException();
       }
@@ -60,5 +92,4 @@ class UserRpositoryImpl implements IUserRepository {
       await conn?.close();
     }
   }
-  
 }
