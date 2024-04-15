@@ -20,18 +20,22 @@ class AuthController {
     required this.userService,
     required this.log,
   });
-  //  @Route.get('/')
-  //  Future<Response> find(Request request) async { 
-  //     return Response.ok(jsonEncode(''));
-  //  }
+
+   @Route.get('/')
+   Future<Response> find(Request request) async { 
+      return Response.ok(jsonEncode({'OLa mundo!':'Todos os cadastros ok'}));
+   }
+   @Route.get('/')
+   Future<Response> login(Request request) async { 
+      return Response.ok(jsonEncode({''}));
+   }
 
    
 
   @Route.post('/register')
   Future<Response> saveUser(Request request) async {
     try {
-      final userModel =
-          UserSaveInputModel.requestMapping(await request.readAsString());
+      final userModel = UserSaveInputModel.requestMapping(await request.readAsString());
       await userService.createUser(userModel);
       return Response.ok(
           jsonEncode({'message': 'cadastro realizado com sucesso'}));

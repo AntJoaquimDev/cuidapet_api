@@ -18,6 +18,15 @@ class UserRpositoryImpl implements IUserRepository {
     required this.log,
   });
 
+
+
+  @override
+  Future<User> loginWithEmailPassword(String email, String password,bool supplierUser) {
+    // TODO: implement loginWithEmailPassword
+    throw UnimplementedError();
+  }
+
+
   @override
   Future<User> createUser(User user) async {
     late final MySqlConnection? conn;
@@ -40,7 +49,8 @@ class UserRpositoryImpl implements IUserRepository {
       return user.copyWith(id: userId, password: '');
       
     } on MySqlException catch (e, s) {
-      if (e.message.contains('usuario.email_UNIQUE')) {
+      
+       if (e.message.contains('usuario.email_UNIQUE')) {
         log.error('Usuario ja cadastrado na base de dados', e, s);
         throw UserExistsException();
       }
@@ -50,4 +60,5 @@ class UserRpositoryImpl implements IUserRepository {
       await conn?.close();
     }
   }
+  
 }

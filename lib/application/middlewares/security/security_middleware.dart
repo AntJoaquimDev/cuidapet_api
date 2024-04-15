@@ -16,7 +16,7 @@ class SecurityMiddleware extends Middlewares {
 
   final skypUrl = <SecuritySkipUrl>[
    //teste of skip
-   // SecuritySkipUrl(url: '/hello/', method: 'GET'),
+    SecuritySkipUrl(url: '/find/', method: 'GET'),
     SecuritySkipUrl(url: '/auth/register', method: 'POST'),
     SecuritySkipUrl(url: '/auth/', method: 'POST'),
     SecuritySkipUrl(url: '/suppliers/user', method: 'GET'),
