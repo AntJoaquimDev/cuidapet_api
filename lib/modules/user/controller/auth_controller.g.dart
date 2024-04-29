@@ -10,7 +10,7 @@ Router _$AuthControllerRouter(AuthController service) {
   final router = Router();
   router.add(
     'GET',
-    r'/',
+    r'/find/',
     service.find,
   );
   router.add(
@@ -22,6 +22,11 @@ Router _$AuthControllerRouter(AuthController service) {
     'POST',
     r'/register',
     service.saveUser,
+  );
+  router.add(
+    'PATCH',
+    r'/auth/confirm',
+    service.confirmLogin,
   );
   return router;
 }

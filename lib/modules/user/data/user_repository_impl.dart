@@ -62,6 +62,50 @@ class UserRpositoryImpl implements IUserRepository {
   }
 
   @override
+  Future<User> loginByEmailSocialKey(
+      String email, String socialKey, String socialType) async {
+    MySqlConnection? conn;
+    try {
+      conn = await connection.openConnection();
+      final result =
+          await conn.query('select * from usuario where email=? ', [email]);
+
+      if (result.isEmpty) {
+        throw UserNotFoundException(message: 'Usuário não encontrado');
+      } else {
+        final dataMysql = result.first;
+
+        if (dataMysql['social_id'] == null ||
+            dataMysql['social_id'] != socialKey) {
+          await conn.query('''
+            update usuario 
+            set social_id = ?, tipo_cadastro = ? 
+            where id = ?
+          ''', [
+            socialKey,
+            socialType,
+            dataMysql['id'],
+          ]);
+        }
+        return User(
+            id: dataMysql['id'] as int,
+            email: dataMysql['email'],
+            registerType: dataMysql['tipo_cadastro'],
+            iosToken: (dataMysql['ios_token'] as Blob?)?.toString(),
+            androidToken: (dataMysql['android_token'] as Blob?)?.toString(),
+            refreshToken: (dataMysql['refresh_token'] as Blob?)?.toString(),
+            imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
+            supplierId: dataMysql['fornecedor_id']);
+      }
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao realizar login com rede social', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
   Future<User> createUser(User user) async {
     late final MySqlConnection? conn;
     try {
@@ -91,5 +135,47 @@ class UserRpositoryImpl implements IUserRepository {
     } finally {
       await conn?.close();
     }
+  }
+
+  @override
+  Future<void> updateUserDeviceTokenAndRefreshToken(User user) async {
+    MySqlConnection? conn;
+    try {
+      conn = await connection.openConnection();
+      final setParams = {};
+        
+      if (user.iosToken != null) {
+        setParams.putIfAbsent('ios_token', () => user.iosToken);
+      } else {
+        setParams.putIfAbsent('android_token', () => user.androidToken);
+      }
+
+
+     final query = ''' 
+        update usuario
+        set 
+          ${setParams.keys.elementAt(0)} = ?,
+          refresh_token = ?
+        where
+          id = ?
+      ''';
+      await conn.query(query,[
+        setParams.values.elementAt(0),
+        user.refreshToken!,
+        user.id!
+      ]);
+
+      } on MySqlException catch (e, s) {
+      log.error('Erro ao confirmar login', e, s);
+      throw DatabaseException();
+    } finally {
+      // TODO
+    }
+  }
+
+  @override
+  Future<void> updateRefreshToken(User user) {
+    // TODO: implement updateRefreshToken
+    throw UnimplementedError();
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:cuidapet_api/application/exceptions/request_validation_exception.dart';
 import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
 import 'package:cuidapet_api/entities/user.dart';
@@ -26,7 +25,7 @@ class AuthController {
     required this.log,
   });
 
-  @Route.get('/')
+  @Route.get('/find/')
   Future<Response> find(Request request) async {
     return Response.ok(jsonEncode({'OLa mundo!': 'Todos os cadastros ok'}));
   }
@@ -39,9 +38,18 @@ class AuthController {
       User user;
       if (!loginViewModel.socialLogin) {
         user = await userService.loginWithEmailPassword(
-            loginViewModel.login, loginViewModel.password,loginViewModel.supplierUser);
+            loginViewModel.login, 
+            loginViewModel.password!,
+            loginViewModel.supplierUser
+            );
       } else {
-        user = User();
+     // Social Login (Facebook, google, apple, etc...)
+       user = await userService.loginWithSocial(
+        loginViewModel.login, 
+        loginViewModel.avatar,
+         loginViewModel.socialType!, 
+         loginViewModel.socialKey!,
+         );
       }
 
       return Response.ok(jsonEncode(
@@ -78,6 +86,12 @@ class AuthController {
       log.error('Erro ao cadastrar usuário', e);
       return Response.internalServerError();
     }
+  }
+
+  @Route('PATCH','/auth/confirm')
+  Future<Response>confirmLogin (Request request) async{
+
+     return Response.ok(jsonEncode('g'));
   }
 
   Router get router => _$AuthControllerRouter(this);

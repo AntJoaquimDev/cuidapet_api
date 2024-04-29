@@ -38,7 +38,7 @@ _i1.GetIt $initGetIt(
         log: get<_i8.ILogger>(),
       ));
   gh.lazySingleton<_i9.IUserService>(() => _i10.UserServiceImpl(
-        userRpository: get<_i6.IUserRepository>(),
+        userRepository: get<_i6.IUserRepository>(),
         log: get<_i8.ILogger>(),
       ));
   gh.factory<_i11.AuthController>(() => _i11.AuthController(
