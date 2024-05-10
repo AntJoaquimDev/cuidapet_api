@@ -174,8 +174,18 @@ class UserRpositoryImpl implements IUserRepository {
   }
 
   @override
-  Future<void> updateRefreshToken(User user) {
-    // TODO: implement updateRefreshToken
-    throw UnimplementedError();
+  Future<void> updateRefreshToken(User user) async {
+    MySqlConnection? conn;
+    try {
+      conn = await connection.openConnection();
+      await conn.query('update usuario set refresh_token = ? where id = ?',
+          [user.refreshToken!, user.id!]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar refresh token', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
   }
+
 }

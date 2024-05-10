@@ -28,4 +28,24 @@ static String generateJWT(int userId, int? supplierId) {
   static JwtClaim getClaims(String token) {
     return verifyJwtHS256Signature(token, _jwtSecret);
   }
+static String refreshToken(String accessToken) {
+  final env=GetIt.I.get<ApplicationConfig>().env;
+  final expiry=int.parse(
+     env['REFRESH_TOKEN_EXPIRE_DAYS'] ?? env['refresh_token_expire_days']!
+  );
+  final notBefore = int.parse(env['REFRESH_TOKEN_NOT_BEFORE_HOURS'] ??
+        env['refresh_token_not_before_hours']!);
+
+final claimSet=JwtClaim(
+  issuer: accessToken,
+  subject: 'RefreshToken',
+  expiry: DateTime.now().add(Duration(days: expiry)),
+  notBefore: DateTime.now().add(Duration(hours: notBefore)),
+   //notBefore: DateTime.now(),
+      issuedAt: DateTime.now(),
+      otherClaims: <String, dynamic>{},
+);
+return 'Bearer ${issueJwtHS256(claimSet, _jwtSecret)}';
+}
+
 }

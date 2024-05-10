@@ -25,7 +25,7 @@ Router _$AuthControllerRouter(AuthController service) {
   );
   router.add(
     'PATCH',
-    r'/auth/confirm',
+    r'/confirm',
     service.confirmLogin,
   );
   return router;

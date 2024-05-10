@@ -37,7 +37,7 @@ class SecurityMiddleware extends Middlewares {
       if (authHeader == null || authHeader.isEmpty) {
         throw JwtException.invalidToken;
       }
-      final authHeaderContent = authHeader.split('');
+      final authHeaderContent = authHeader.split(' ');
       if (authHeaderContent[0] != 'Bearer') {
         throw JwtException.invalidToken;
       }
