@@ -15,7 +15,7 @@ static String generateJWT(int userId, int? supplierId) {
         issuer: 'cuidapet',
         subject: userId.toString(),
         expiry: DateTime.now().add(Duration(days: expire)),
-        //expiry: DateTime.now().add(Duration(seconds: 30)),
+       //expiry: DateTime.now().add(Duration(seconds: 30)),
         notBefore: DateTime.now(),
         issuedAt: DateTime.now(),
         otherClaims: <String, dynamic>{'supplier': supplierId},
@@ -41,7 +41,7 @@ final claimSet=JwtClaim(
   subject: 'RefreshToken',
   expiry: DateTime.now().add(Duration(days: expiry)),
   notBefore: DateTime.now().add(Duration(hours: notBefore)),
-   //notBefore: DateTime.now(),
+  
       issuedAt: DateTime.now(),
       otherClaims: <String, dynamic>{},
 );
