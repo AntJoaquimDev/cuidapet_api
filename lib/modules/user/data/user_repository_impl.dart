@@ -220,4 +220,18 @@ class UserRpositoryImpl implements IUserRepository {
       await conn?.close();
     }
   }
+  
+  @override
+  Future<void> updateUrlAvatar(int id, String urlAvatar) async{
+   MySqlConnection? conn;
+   try {
+     conn=await connection.openConnection();
+     await conn.query('update usuario set img_avatar = ? where id = ?', [urlAvatar, id]);
+   }on MySqlException catch (e,s) {
+     log.error('Erro ao atualizar o avatar', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
 }
