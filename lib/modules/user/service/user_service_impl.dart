@@ -93,6 +93,9 @@ class UserServiceImpl implements IUserService {
     return RefreshTokenViewModel(
         accessToken: newAccessToken, refreshToken: newRefreshToken);
   }
+  
+  @override
+  Future<User> findById(int id) =>userRepository.findById(id);
 }
 
 void _validateRefreshToken(UserRefreshTokenInputModel model) {

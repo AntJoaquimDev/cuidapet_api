@@ -143,15 +143,14 @@ class UserRpositoryImpl implements IUserRepository {
     try {
       conn = await connection.openConnection();
       final setParams = {};
-        
+
       if (user.iosToken != null) {
         setParams.putIfAbsent('ios_token', () => user.iosToken);
       } else {
         setParams.putIfAbsent('android_token', () => user.androidToken);
       }
 
-
-     final query = ''' 
+      final query = ''' 
         update usuario
         set 
           ${setParams.keys.elementAt(0)} = ?,
@@ -159,13 +158,9 @@ class UserRpositoryImpl implements IUserRepository {
         where
           id = ?
       ''';
-      await conn.query(query,[
-        setParams.values.elementAt(0),
-        user.refreshToken!,
-        user.id!
-      ]);
-
-      } on MySqlException catch (e, s) {
+      await conn.query(
+          query, [setParams.values.elementAt(0), user.refreshToken!, user.id!]);
+    } on MySqlException catch (e, s) {
       log.error('Erro ao confirmar login', e, s);
       throw DatabaseException();
     } finally {
@@ -188,4 +183,41 @@ class UserRpositoryImpl implements IUserRepository {
     }
   }
 
+  @override
+  Future<User> findById(int id) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+     final result =  await conn.query('''
+        select 
+          id, email, tipo_cadastro, ios_token, android_token,
+          refresh_token, img_avatar, fornecedor_id
+        from usuario
+        where id = ?
+      ''', [id]);
+      if(result.isEmpty){
+        log.error('Usuário não encontrado com o id[$id]');
+        throw UserNotFoundException(
+            message: 'Usuário não encontrado com o id[$id]');
+      }else{
+        final dataMysql=result.first;
+         return User(
+            id: dataMysql['id'] as int,
+            email: dataMysql['email'],
+            registerType: dataMysql['tipo_cadastro'],
+            iosToken: (dataMysql['ios_token'] as Blob?)?.toString(),
+            androidToken: (dataMysql['android_token'] as Blob?)?.toString(),
+            refreshToken: (dataMysql['refresh_token'] as Blob?)?.toString(),
+            imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
+            supplierId: dataMysql['fornecedor_id']);
+      }
+      
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar usuario por id', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
 }

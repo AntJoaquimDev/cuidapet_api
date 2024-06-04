@@ -12,5 +12,7 @@ abstract class IUserService {
  Future<String> confirmLogin(UserConfirmInputModel inputModel);
 Future<RefreshTokenViewModel> refreshToken(UserRefreshTokenInputModel model);
 Future<void> updateDeviceToken(UserUpdateTokenDeviceInputModel model);
+Future<User> findById(int id);
+
 
 }
