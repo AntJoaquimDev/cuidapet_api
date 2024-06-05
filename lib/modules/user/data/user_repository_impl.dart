@@ -1,5 +1,6 @@
 import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api/modules/user/data/i_user_repository.dart';
+import 'package:cuidapet_api/modules/user/view_models/platform.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
 
@@ -164,7 +165,7 @@ class UserRpositoryImpl implements IUserRepository {
       log.error('Erro ao confirmar login', e, s);
       throw DatabaseException();
     } finally {
-      // TODO
+      await conn?.close();
     }
   }
 
@@ -234,4 +235,27 @@ class UserRpositoryImpl implements IUserRepository {
       await conn?.close();
     }
   }
-}
+
+  @override
+  Future<void> updateDeviceToken(int id, String token, Platform platform)async {
+  MySqlConnection? conn;
+  try {
+      conn = await connection.openConnection();
+      var set = '';
+      if (platform == Platform.ios) {
+        set = 'ios_token = ?';
+      } else {
+        set = 'android_token = ?';
+      }
+
+      final query = 'update usuario set $set where id = ?';
+      await conn.query(query, [token, id]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar o device token', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+  }
+

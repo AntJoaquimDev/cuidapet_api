@@ -10,7 +10,7 @@ UserUpdateTokenDeviceInputModel({required this.userId, required String dataReque
   @override
   void map() {
      token = data['token'];
-    platform = (data['plataform'].toLowerCase() == 'ios' ? Platform.ios : Platform.android);
+    platform = (data['plataform'] == 'ios'.toLowerCase() ? Platform.ios : Platform.android);
   }
   
   @override

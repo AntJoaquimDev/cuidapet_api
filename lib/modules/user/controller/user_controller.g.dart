@@ -18,5 +18,10 @@ Router _$UserControllerRouter(UserController service) {
     r'/avatar',
     service.updateAvatar,
   );
+  router.add(
+    'PUT',
+    r'/device',
+    service.updatDeviceToken,
+  );
   return router;
 }

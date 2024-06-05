@@ -7,6 +7,7 @@ import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
 import 'package:cuidapet_api/application/logger/i_logger.dart';
 import 'package:cuidapet_api/entities/user.dart';
 import 'package:cuidapet_api/modules/user/data/i_user_repository.dart';
+import 'package:cuidapet_api/modules/user/data/user_repository_impl.dart';
 import 'package:cuidapet_api/modules/user/service/i_user_service.dart';
 import 'package:cuidapet_api/modules/user/view_models/refresh_token_view_model.dart';
 import 'package:cuidapet_api/modules/user/view_models/update_url_avatar_view_model.dart';
@@ -14,6 +15,7 @@ import 'package:cuidapet_api/modules/user/view_models/update_url_avatar_view_mod
 import 'package:cuidapet_api/modules/user/view_models/user_confirm_input_model.dart';
 import 'package:cuidapet_api/modules/user/view_models/user_refresh_token_input_model.dart';
 import 'package:cuidapet_api/modules/user/view_models/user_save_input_model.dart';
+import 'package:cuidapet_api/modules/user/view_models/user_update_token_device_input_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 
@@ -74,12 +76,6 @@ class UserServiceImpl implements IUserService {
   }
 
   @override
-  Future<void> updateDeviceToken(model) {
-    // TODO: implement updateDeviceToken
-    throw UnimplementedError();
-  }
-
-  @override
   Future<RefreshTokenViewModel> refreshToken(
       UserRefreshTokenInputModel model) async {
     _validateRefreshToken(model);
@@ -94,15 +90,23 @@ class UserServiceImpl implements IUserService {
     return RefreshTokenViewModel(
         accessToken: newAccessToken, refreshToken: newRefreshToken);
   }
-  
-  @override
-  Future<User> findById(int id) =>userRepository.findById(id);
 
   @override
-  Future<User> updateAvatar(UpdateUrlAvatarViewModel viewModel)async {
-   await userRepository.updateUrlAvatar(viewModel.userId, viewModel.urlAvatar);
-   return findById(viewModel.userId);
+  Future<User> findById(int id) => userRepository.findById(id);
+
+  @override
+  Future<User> updateAvatar(UpdateUrlAvatarViewModel viewModel) async {
+    await userRepository.updateUrlAvatar(viewModel.userId, viewModel.urlAvatar);
+    return findById(viewModel.userId);
   }
+
+  @override
+  Future<void> updateDeviceToken(UserUpdateTokenDeviceInputModel model) =>
+      userRepository.updateDeviceToken(
+        model.userId,
+        model.token,
+        model.platform,
+      );
 }
 
 void _validateRefreshToken(UserRefreshTokenInputModel model) {
