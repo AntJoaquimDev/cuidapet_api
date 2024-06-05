@@ -16,7 +16,7 @@ class SecurityMiddleware extends Middlewares {
 
   final skypUrl = <SecuritySkipUrl>[
    //teste of skip
-   // SecuritySkipUrl(url: '/hello/', method: 'GET'),
+     SecuritySkipUrl(url: '/auth/find/', method: 'GET'),
     SecuritySkipUrl(url: '/auth/register', method: 'POST'),
     SecuritySkipUrl(url: '/auth/', method: 'POST'),
     SecuritySkipUrl(url: '/suppliers/user', method: 'GET'),
@@ -37,7 +37,7 @@ class SecurityMiddleware extends Middlewares {
       if (authHeader == null || authHeader.isEmpty) {
         throw JwtException.invalidToken;
       }
-      final authHeaderContent = authHeader.split('');
+      final authHeaderContent = authHeader.split(' ');
       if (authHeaderContent[0] != 'Bearer') {
         throw JwtException.invalidToken;
       }
