@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cuidapet_api/entities/catogory.dart';
 
 class Supplier {
@@ -42,4 +44,34 @@ class Supplier {
       category: category ?? this.category,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'logo': logo,
+      'address': address,
+      'phone': phone,
+      'lat': lat,
+      'lng': lng,
+      'category': category?.toMap(),
+    };
+  }
+
+  factory Supplier.fromMap(Map<String, dynamic> map) {
+    return Supplier(
+      id: map['id']?.toInt(),
+      name: map['name'],
+      logo: map['logo'],
+      address: map['address'],
+      phone: map['phone'],
+      lat: map['lat']?.toDouble(),
+      lng: map['lng']?.toDouble(),
+      category: map['category'] != null ? Category.fromMap(map['category']) : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Supplier.fromJson(String source) => Supplier.fromMap(json.decode(source));
 }
