@@ -82,7 +82,21 @@ class SupplierController {
       return Response.internalServerError(
           body: jsonEncode({'message': 'Erro ao buscar servicos'}));
     }
+
+
   }
+    @Route.get('/user')
+  Future<Response> checkUserExists(Request request) async {
+    final email = request.url.queryParameters['email'];
+    if (email == null) {
+      return Response(400, body: jsonEncode({'message': 'E-mail obrigatório'}));
+    }
+
+    final isEmailExists = await service.checkUserEmailsExists(email);
+    return isEmailExists ? Response(200) : Response(204);
+  }
+
+
 
   String _supplierMapper(Supplier supplier) {
     return jsonEncode({

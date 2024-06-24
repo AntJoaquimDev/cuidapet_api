@@ -22,10 +22,7 @@ class ISupplierRepositoryImpl implements ISupplierRepository {
     required this.log,
   });
   @override
-  Future<bool> checkUserEmailExists(String email) {
-    // TODO: implement checkUserEmailExists
-    throw UnimplementedError();
-  }
+ 
 
   @override
   Future<Supplier?> findById(int id) async {
@@ -141,14 +138,99 @@ class ISupplierRepositoryImpl implements ISupplierRepository {
   }
 
   @override
-  Future<int> saveSupplier(Supplier supplier) {
-    // TODO: implement saveSupplier
-    throw UnimplementedError();
+  Future<bool>checkUserEmailExists(String email) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn
+          .query('select count(*) from usuario where email = ?', [email]);
+
+      final dataMysql = result.first;
+      return dataMysql[0] > 0;
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao verificar se login existe', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
   }
 
   @override
-  Future<Supplier> update(Supplier supplier) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<int> saveSupplier(Supplier supplier) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+        insert into fornecedor(nome, logo, endereco, telefone, latlng, categorias_fornecedor_id)
+        values (?,?,?,?,ST_GeomFromText(?),?)
+      ''', [
+        supplier.name,
+        supplier.logo,
+        supplier.address,
+        supplier.phone,
+        'POINT(${supplier.lat ?? 0} ${supplier.lng ?? 0})',
+        supplier.category?.id
+      ]);
+
+      return result.insertId ?? 0;
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao cadastrar novo fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<Supplier> update(Supplier supplier) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      await conn.query('''
+        update fornecedor
+          set
+            nome = ?,
+            logo = ?,
+            endereco = ?,
+            telefone = ?,
+            latlng = ST_GeomFromText(?),
+            categorias_fornecedor_id = ?
+        where
+          id = ?
+      ''', [
+        supplier.name,
+        supplier.logo,
+        supplier.address,
+        supplier.phone,
+        'POINT(${supplier.lat} ${supplier.lng})',
+        supplier.category?.id,
+        supplier.id
+      ]);
+
+      Category? category;
+      final categoryId = supplier.category?.id;
+      if (categoryId != null) {
+        final resultCategory = await conn.query(
+            'select * from categorias_fornecedor where id = ?',
+            [categoryId]);
+
+        var categoryData = resultCategory.first;
+        category = Category(
+          id: categoryData['id'],
+          name: categoryData['nome_categoria'],
+          type: categoryData['tipo_categoria'],
+        );
+      }
+
+      return supplier.copyWith(category: category);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar dados do fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
   }
 }

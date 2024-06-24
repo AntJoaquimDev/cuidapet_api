@@ -29,10 +29,7 @@ class ISupplierServiceImpl implements ISupplierService {
 
 
   @override
-  Future<bool> checkUserEmailsExists(String email) {
-    // TODO: implement createUserSupplier
-    throw UnimplementedError();
-  }
+  Future<bool> checkUserEmailsExists(String email) => repository.checkUserEmailExists(email);
 
   @override
   Future<List<SupplierNearbyMeDTO>> findNearByMe(double lat, double lng) =>
@@ -51,22 +48,4 @@ class ISupplierServiceImpl implements ISupplierService {
     // TODO: implement update
     throw UnimplementedError();
   }
-}
-
-@override
-Future<List<entite.SupplierService>> findServicesBySupplier(int supplierId) {
-  // TODO: implement findServicesBySupplier
-  throw UnimplementedError();
-}
-
-@override
-Future<Supplier> update(SupplierUpdateInputModel model) {
-  // TODO: implement update
-  throw UnimplementedError();
-}
-
-@override
-Future<bool> checkUserEmailsExists(String email) {
-  // TODO: implement checkUserEmailsExists
-  throw UnimplementedError();
 }
