@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cuidapet_api/application/logger/i_logger.dart';
-import 'package:cuidapet_api/entities/catogory.dart';
 import 'package:cuidapet_api/entities/supplier.dart';
 import 'package:cuidapet_api/modules/supplier/service/i_supplier_service.dart';
 import 'package:injectable/injectable.dart';
@@ -9,9 +8,10 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 part 'supplier_controller.g.dart';
+
 @Injectable()
 class SupplierController {
-ISupplierService service;
+  ISupplierService service;
   ILogger log;
 
   SupplierController({
@@ -19,22 +19,19 @@ ISupplierService service;
     required this.log,
   });
 
-   @Route.get('/')
-   Future<Response> findNearByMe(Request request) async { 
-     try {
-  final lat = double.tryParse(request.url.queryParameters['lat'] ?? '');
-   final lng = double.tryParse(request.url.queryParameters['lng'] ?? '');
-   if(lat == null|| lng ==null){
-     return Response(
-       400,
-       body: jsonEncode(
-         {'message':'Latitude e Longitude obrigatórios'},
-       )
-     );
-   
-   }
-final suppliers= await service.findNearByMe(lat, lng);
-final result = suppliers
+  @Route.get('/')
+  Future<Response> findNearByMe(Request request) async {
+    try {
+      final lat = double.tryParse(request.url.queryParameters['lat'] ?? '');
+      final lng = double.tryParse(request.url.queryParameters['lng'] ?? '');
+      if (lat == null || lng == null) {
+        return Response(400,
+            body: jsonEncode(
+              {'message': 'Latitude e Longitude obrigatórios'},
+            ));
+      }
+      final suppliers = await service.findNearByMe(lat, lng);
+      final result = suppliers
           .map((s) => {
                 'id': s.id,
                 'name': s.name,
@@ -43,27 +40,51 @@ final result = suppliers
                 'category': s.categoryId,
               })
           .toList();
-   return Response.ok(jsonEncode(result));
-} catch (e, s) {
+      return Response.ok(jsonEncode(result));
+    } catch (e, s) {
       log.error('Erro ao buscar fornecedores perto de mim', e, s);
       return Response.internalServerError(
           body: jsonEncode(
               {'message': 'Erro ao buscar fornecedores perto de mim'}));
     }
-   }
+  }
 
- @Route.get('/<id|[0-9]+>')
+  @Route.get('/<id|[0-9]+>')
   Future<Response> findById(Request request, String id) async {
     final supplier = await service.findById(int.parse(id));
 
     if (supplier == null) {
-      return Response.ok(jsonEncode({'message':'não existe forncedor com esse id =, $id'}));
+      return Response.ok(
+          jsonEncode({'message': 'não existe forncedor com esse id =, $id'}));
     }
 
     return Response.ok(_supplierMapper(supplier));
   }
-   
-String _supplierMapper(Supplier supplier) {
+
+  @Route.get('/<supplierId|[0-9]+>/services')
+  Future<Response> findServicesBySupplierId(
+      Request request, String supplierId) async {
+    try {
+      final suupplierServices =
+          await service.findServicesBySupplier(int.parse(supplierId));
+
+      final result = suupplierServices
+          .map((s) => {
+                'id': s.id,
+                'supplier_id': s.supplierId,
+                'name': s.name,
+                'price': s.price
+              })
+          .toList();
+      return Response.ok(jsonEncode(result));
+    } catch (e, s) {
+      log.error('Erro ao buscar servicos', e, s);
+      return Response.internalServerError(
+          body: jsonEncode({'message': 'Erro ao buscar servicos'}));
+    }
+  }
+
+  String _supplierMapper(Supplier supplier) {
     return jsonEncode({
       'id': supplier.id,
       'name': supplier.name,
@@ -80,7 +101,5 @@ String _supplierMapper(Supplier supplier) {
     });
   }
 
-   
-
-   Router get router => _$SupplierControllerRouter(this);
+  Router get router => _$SupplierControllerRouter(this);
 }

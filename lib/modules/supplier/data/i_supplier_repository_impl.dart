@@ -28,8 +28,8 @@ class ISupplierRepositoryImpl implements ISupplierRepository {
   }
 
   @override
-  Future<Supplier?> findById(int id) async{
-   MySqlConnection? conn;
+  Future<Supplier?> findById(int id) async {
+    MySqlConnection? conn;
 
     try {
       conn = await connection.openConnection();
@@ -108,10 +108,36 @@ class ISupplierRepositoryImpl implements ISupplierRepository {
       await conn?.close();
     }
   }
+
   @override
-  Future<List<SupplierService>> findServicesBySupplierId(int supplierId) {
-    // TODO: implement findServicesBySupplierId
-    throw UnimplementedError();
+  Future<List<SupplierService>> findServicesBySupplierId(int supplierId) async {
+    MySqlConnection? conn;
+    try {
+      conn = await connection.openConnection();
+      final query = '''
+        select id, fornecedor_id, nome_servico, valor_servico
+        from fornecedor_servicos
+        where fornecedor_id = ?
+      ''';
+      final result = await conn.query(query, [supplierId]);
+
+      if (result.isEmpty) {
+        return [];
+      }
+      return result
+          .map((s) => SupplierService(
+                id: s['id'],
+                supplierId: s['fornecedor_id'],
+                name: s['nome_servico'],
+                price: s['valor_servico'],
+              ))
+          .toList();
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar os servicos de um fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
   }
 
   @override

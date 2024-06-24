@@ -12,4 +12,5 @@ class SupplierService {
     this.name,
     this.price,
   });
+  
 }
