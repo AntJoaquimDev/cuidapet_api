@@ -28,5 +28,10 @@ Router _$SupplierControllerRouter(SupplierController service) {
     r'/user',
     service.checkUserExists,
   );
+  router.add(
+    'POST',
+    r'/user',
+    service.createNewUser,
+  );
   return router;
 }
