@@ -1,6 +1,6 @@
 import 'package:cuidapet_api/application/helpers/request_mapping.dart';
 
-class SupplierUpdateInputModel extends RequestMapping {
+class SupplierUpdateInputMode extends RequestMapping {
   int supplierId;
   late String name;
   late String logo;
@@ -10,7 +10,7 @@ class SupplierUpdateInputModel extends RequestMapping {
   late double lng;
   late int categoryId;
 
-  SupplierUpdateInputModel(
+  SupplierUpdateInputMode(
       {required this.supplierId, required String dataRequest})
       : super(dataRequest);
 

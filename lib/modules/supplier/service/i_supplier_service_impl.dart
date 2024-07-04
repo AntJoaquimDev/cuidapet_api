@@ -48,9 +48,18 @@ class ISupplierServiceImpl implements ISupplierService {
     
   }
 
-  @override
-  Future<Supplier> update(SupplierUpdateInputModel model) {
-    // TODO: implement update
-    throw UnimplementedError();
+ @override
+  Future<Supplier> update(SupplierUpdateInputMode model) async {
+    var supplier = Supplier(
+        id: model.supplierId,
+        name: model.name,
+        address: model.address,
+        lat: model.lat,
+        lng: model.lng,
+        logo: model.logo,
+        phone: model.phone,
+        category: Category(id: model.categoryId));
+
+    return await repository.update(supplier);
   }
 }

@@ -10,5 +10,5 @@ abstract class ISupplierService {
   Future<List<SupplierService>> findServicesBySupplier(int supplierId);
   Future<bool> checkUserEmailsExists(String email);
   Future<void> createUserSupplier(CreateSupplierUserViewModel model);
-  Future<Supplier> update(SupplierUpdateInputModel model);
+  Future<Supplier> update(SupplierUpdateInputMode model);
 }
