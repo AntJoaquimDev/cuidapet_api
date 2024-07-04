@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cuidapet_api/application/exceptions/database_exceptions.dart';
 import 'package:cuidapet_api/application/logger/i_logger.dart';
+import 'package:cuidapet_api/entities/catogory.dart';
 import 'package:cuidapet_api/entities/supplier.dart';
 import 'package:cuidapet_api/modules/supplier/service/i_supplier_service.dart';
 import 'package:cuidapet_api/modules/supplier/view_models/create_supplier_user_view_model.dart';
+import 'package:cuidapet_api/modules/supplier/view_models/supplier_update_input_model.dart';
 import 'package:injectable/injectable.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -112,9 +116,31 @@ class SupplierController {
         'message': 'Erro ao cadastrar um novo fornecedor e usuário',
       }));
     }
+    
   }
 
-  String _supplierMapper(Supplier supplier) {
+
+  @Route.put('/')
+  Future<Response> update(Request request) async {
+    try {
+      final supplier = int.tryParse(request.headers['supplier'] ?? '');
+      
+      if (supplier == null) {
+        return Response(400,
+            body: jsonEncode({'message': 'código fornecedor não pode ser nulo'}));
+      }
+      
+      final model = SupplierUpdateInputMode(
+          supplierId: supplier, dataRequest: await request.readAsString());
+      
+      final supplierResponse = await service.update(model);
+      
+      return Response.ok(_supplierMapper(supplierResponse));
+    } catch (e, s) {
+      log.error('Erro ao atualizar fornecedor', e, s);
+      return Response.internalServerError();
+    }
+  }  String _supplierMapper(Supplier supplier) {
     return jsonEncode({
       'id': supplier.id,
       'name': supplier.name,

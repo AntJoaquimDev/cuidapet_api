@@ -33,5 +33,10 @@ Router _$SupplierControllerRouter(SupplierController service) {
     r'/user',
     service.createNewUser,
   );
+  router.add(
+    'PUT',
+    r'/',
+    service.update,
+  );
   return router;
 }
