@@ -34,6 +34,95 @@ class ScheduleController {
       return Response.internalServerError();
     }
   }
+   @Route.put('/<scheduleId|[0-9]+>/status/<status>')
+  Future<Response> changeStatus(
+      Request request, String scheduleId, String status) async {
+    try {
+      await service.changeStatus(status, int.parse(scheduleId));
+      return Response.ok(jsonEncode({}));
+    } catch (e, s) {
+      log.error('Erro ao alterar status do agendamento', e, s);
+      return Response.internalServerError();
+    }
+  }
+
+ 
+  @Route.get('/')
+  Future<Response> findAllSchedulesByUser(Request request) async {
+    final userId = int.parse(request.headers['user']!);
+    try {
+      final result = await service.findAllSchedulesByUser(userId);
+
+      final response = result
+          .map(
+            (s) => {
+              'id': s.id,
+              'schedule_date': s.scheduleDate.toIso8601String(),
+              'status': s.status,
+              'name': s.name,
+              'pet_name': s.petName,
+              'supplier': {
+                'id': s.supplier.id,
+                'name': s.supplier.name,
+                'logo': s.supplier.logo
+              },
+              'services': s.services
+                  .map((e) => {
+                        'id': e.service.id,
+                        'name': e.service.name,
+                        'price': e.service.price
+                      })
+                  .toList(),
+            },
+          )
+          .toList();
+
+      return Response.ok(jsonEncode(response));
+    } catch (e, s) {
+      log.error('Erro ao buscar agendamentos do usuário [$userId]', e, s);
+      return Response.internalServerError();
+    }
+  }
+
+
+  @Route.get('/supplier')
+  Future<Response> findAllSchedulesBySupplier(Request request) async {
+    final userId = int.parse(request.headers['user']!);
+    try {
+      final result = await service.findAllSchedulesByUserSupplier(userId);
+
+      final response = result
+          .map(
+            (s) => {
+              'id': s.id,
+              'schedule_date': s.scheduleDate.toIso8601String(),
+              'status': s.status,
+              'name': s.name,
+              'pet_name': s.petName,
+              'supplier': {
+                'id': s.supplier.id,
+                'name': s.supplier.name,
+                'logo': s.supplier.logo
+              },
+              'services': s.services
+                  .map((e) => {
+                        'id': e.service.id,
+                        'name': e.service.name,
+                        'price': e.service.price
+                      })
+                  .toList(),
+            },
+          )
+          .toList();
+
+      return Response.ok(jsonEncode(response));
+    } catch (e, s) {
+      log.error('Erro ao buscar agendamentos do usuário fornecedor [$userId]', e, s);
+      return Response.internalServerError();
+    }
+  }
 
   Router get router => _$ScheduleControllerRouter(this);
 }
+
+
