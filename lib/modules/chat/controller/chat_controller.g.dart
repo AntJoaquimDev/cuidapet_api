@@ -1,32 +1,37 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'schedule_controller.dart';
+part of 'chat_controller.dart';
 
 // **************************************************************************
 // ShelfRouterGenerator
 // **************************************************************************
 
-Router _$ScheduleControllerRouter(ScheduleController service) {
+Router _$ChatControllerRouter(ChatController service) {
   final router = Router();
   router.add(
     'POST',
-    r'/',
-    service.scheduleService,
+    r'/schedule/<scheduleId>/start-chat',
+    service.startChatByScheduleId,
   );
   router.add(
-    'PUT',
-    r'/<scheduleId|[0-9]+>/status/<status>',
-    service.changeStatus,
+    'POST',
+    r'/notify',
+    service.notifyUser,
   );
   router.add(
     'GET',
-    r'/',
-    service.findAllSchedulesByUser,
+    r'/user',
+    service.findChatsByUser,
   );
   router.add(
     'GET',
     r'/supplier',
-    service.findAllSchedulesBySupplier,
+    service.findChatsBySupplier,
+  );
+  router.add(
+    'PUT',
+    r'/<chatId>/end-chat',
+    service.endChat,
   );
   return router;
 }

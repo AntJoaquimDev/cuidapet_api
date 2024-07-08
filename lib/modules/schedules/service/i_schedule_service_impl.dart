@@ -17,23 +17,12 @@ class IScheduleServiceImpl implements IScheduleService {
   });
 
   @override
-  Future<void> changeStatus(String status, int scheduleId) {
-    // TODO: implement changeStatus
-    throw UnimplementedError();
-  }
+  Future<void> changeStatus(String status, int scheduleId) =>repository.changeStatus(status, scheduleId);
+  @override
+  Future<List<Schedule>> findAllSchedulesByUser(int userId) =>repository.findAllSchedulesByUser(userId);
 
   @override
-  Future<List<Schedule>> findAllSchedulesByUser(int userId) {
-    // TODO: implement findAllSchedulesByUser
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<Schedule>> findAllSchedulesByUserSupplier(int userId) {
-    // TODO: implement findAllSchedulesByUserSupplier
-    throw UnimplementedError();
-  }
-
+  Future<List<Schedule>> findAllSchedulesByUserSupplier(int userId) =>repository.findAllSchedulesByUserSupplier(userId);
   @override
   Future<void> scheduleService(ScheduleSaveInputModel model)async {
     final schedule = Schedule(
